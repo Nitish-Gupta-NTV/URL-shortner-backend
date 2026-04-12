@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -54,8 +55,11 @@ public class WebSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception
     {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth->auth.requestMatchers("/api/auth/**").permitAll()
+        httpSecurity
+                .cors(Customizer.withDefaults()) // this line add by the claud and to allow cros orign platform to allow
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth->auth
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/urls/**","/api/Testing").authenticated()
                          .requestMatchers("/{shorturl}").permitAll().anyRequest().authenticated());
         httpSecurity.addFilterBefore(jwtAuthentaionfilter(), UsernamePasswordAuthenticationFilter.class);

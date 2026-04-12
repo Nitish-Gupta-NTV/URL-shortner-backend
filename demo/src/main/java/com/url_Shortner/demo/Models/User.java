@@ -4,8 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name="user")
+@Table(name="user" ,uniqueConstraints = {
+@UniqueConstraint(columnNames = "userName"),
+@UniqueConstraint(columnNames = "email")
+})
 @Data
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,3 +20,10 @@ public class User {
     private String email;
 
 }
+/*
+add this through claud
+,uniqueConstraints = {
+@UniqueConstraint(columnNames = "userName"),
+@UniqueConstraint(columnNames = "email")
+}
+ */

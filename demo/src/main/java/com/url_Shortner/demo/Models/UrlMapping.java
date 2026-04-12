@@ -25,6 +25,11 @@ public class UrlMapping {
     @JoinColumn(name = "user_id") //owning side
     private User user;
 
-    @OneToMany(mappedBy = "urlMapping")
-    List<ClickEvent>clickEvents;
+    /*@OneToMany(mappedBy = "urlMapping")
+    List<ClickEvent>clickEvents;*/
+    // this is claud
+    @OneToMany(mappedBy = "urlMapping", cascade = CascadeType.ALL, orphanRemoval = true)  // ✅ add this
+            List<ClickEvent> clickEvents;
+
+
 }

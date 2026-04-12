@@ -14,6 +14,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class UrlmappingController {
     }
     @GetMapping("/analytics/{shortUrl}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<ClickEventDto>> analyiscsrespnce(@PathVariable String shortUrl,
+   /* public ResponseEntity<List<ClickEventDto>> analyiscsrespnce(@PathVariable String shortUrl,
                                                                 @RequestParam("startDate") String startdate,
                                                                 @RequestParam("lastdate") String lastdate)
     {
@@ -54,10 +55,29 @@ public class UrlmappingController {
         LocalDateTime end=LocalDateTime.parse(lastdate,formatter);
        List<ClickEventDto>clickEventDtos= urlmapping.getclickeventbydate(shortUrl,start,end);
        return ResponseEntity.ok(clickEventDtos);
+    }*/
+
+    public ResponseEntity<List<ClickEventDto>> analyiscsrespnce(@PathVariable String shortUrl,
+                                                                @RequestParam("startDate") String startdate,
+                                                                @RequestParam("lastdate") String lastdate)
+    {
+
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd'T'HH:mm")
+                .appendPattern(":ss")
+                .optionalStart()
+                .appendPattern(":ss")
+                .optionalEnd()
+                .toFormatter();
+
+        LocalDateTime start = LocalDateTime.parse(startdate, formatter);
+        LocalDateTime end = LocalDateTime.parse(lastdate, formatter);
+        List<ClickEventDto> clickEventDtos = urlmapping.getclickeventbydate(shortUrl, start, end);
+        return ResponseEntity.ok(clickEventDtos);
     }
     @PostMapping("/totalclick")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Map<LocalDateTime,Long>> totalclicking(Principal principal,
+   /* public ResponseEntity<Map<LocalDateTime,Long>> totalclicking(Principal principal,
                                                              @RequestParam("startDate") String startdate,
                                                              @RequestParam("lastdate") String lastdate)
     {
@@ -70,6 +90,30 @@ public class UrlmappingController {
 
 
 
+    }*/
+    public ResponseEntity<Map<LocalDate, Long>> totalclicking(Principal principal,
+                                                              @RequestParam("startDate") String startdate,
+                                                              @RequestParam("lastdate") String lastdate)
+    {
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd'T'HH:mm")
+                .appendPattern(":ss")
+                .optionalStart()
+                .appendPattern(":ss")
+                .optionalEnd()
+                .toFormatter();
+        User user = service.findByUsername(principal.getName());
+        LocalDateTime start = LocalDateTime.parse(startdate, formatter);
+        LocalDateTime end = LocalDateTime.parse(lastdate, formatter);
+        Map<LocalDate, Long> totalclick = urlmapping.gettotalclickbyuseranddate(user, start, end); // ✅ LocalDate return
+        return ResponseEntity.ok(totalclick);
+    }
+    @DeleteMapping("/{shortUrl}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> deleteUrl(@PathVariable String shortUrl, Principal principal) {
+        User user = service.findByUsername(principal.getName());
+        urlmapping.deleteUrl(shortUrl, user);
+        return ResponseEntity.ok(Map.of("message", "URL deleted successfully"));
     }
 
 }

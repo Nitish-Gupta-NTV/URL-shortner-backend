@@ -56,6 +56,7 @@ public class JwtUtlis {
     }
     private Key key()
     {
+
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(JwtSecret));
     }
     public boolean validateToken(String authToken)
@@ -67,7 +68,7 @@ public class JwtUtlis {
         } catch (JwtException e) {
             throw new RuntimeException(e);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
         catch (Exception e)
         {

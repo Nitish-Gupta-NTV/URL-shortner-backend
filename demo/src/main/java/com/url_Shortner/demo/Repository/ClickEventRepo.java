@@ -5,6 +5,7 @@ import com.url_Shortner.demo.Models.UrlMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface ClickEventRepo extends JpaRepository<ClickEvent, Long> {
             LocalDateTime start,
             LocalDateTime end
     );
+
+
 }

@@ -13,4 +13,5 @@ import java.util.List;
 public interface UrlMappingRepo extends JpaRepository<UrlMapping,Long> {
     UrlMapping findByShortUrl (String shorturl);
     List<UrlMapping> findByUser(User user);
+
 }
