@@ -1,6 +1,7 @@
 package com.url_Shortner.demo.Security;
 import com.url_Shortner.demo.JWTSecurity.JwtAuthentaionfilter;
 import com.url_Shortner.demo.Service.UserDeatilsServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,13 +59,22 @@ public class WebSecurity {
         httpSecurity
                 .cors(Customizer.withDefaults()) // this line add by the claud and to allow cros orign platform to allow
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Unauthorized - please login again\"}");
+                        })
+                )
+
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/urls/**","/api/Testing").authenticated()
                          .requestMatchers("/{shorturl}").permitAll().anyRequest().authenticated());
         httpSecurity.addFilterBefore(jwtAuthentaionfilter(), UsernamePasswordAuthenticationFilter.class);
        httpSecurity.authenticationProvider(authenticationProvider());
-        return httpSecurity.build();
+
+    return httpSecurity.build();
     }
 
 }
